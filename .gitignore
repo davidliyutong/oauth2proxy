@@ -1,0 +1,21 @@
+# IDE
+.idea
+.vscode
+
+# Logs, Temp Data
+logs
+tmp
+
+# Python
+*.pyc
+*.egg-info
+
+# Build and Distribution
+build
+dist
+
+# Credentials
+creds
+
+# tar
+*.tar.gz

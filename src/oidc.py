@@ -266,9 +266,9 @@ async def oidc_validate(request):
     """
     This function validates the token in:
     - header.Authorization
-    - urlParam.clpl_auth_token
+    - urlParam.oauth2proxy_auth_token
 
-    If the validation succeed, return 200 OK and set cookie clpl_auth_token=${JWT}
+    If the validation succeed, return 200 OK and set cookie oauth2proxy_auth_token=${JWT}
     """
     logger.debug(f"{request.method} {request.path} invoked")
     # try to get from cookies

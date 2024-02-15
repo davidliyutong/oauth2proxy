@@ -216,6 +216,6 @@ class OAuth2Config(BaseModel):
         return self._email_expr
 
 
-CONFIG_AUTH_COOKIES_NAME = "clpl_auth_token"
+CONFIG_AUTH_COOKIES_NAME = "oauth2proxy_auth_token"
 CONFIG_COOKIE_EXPIRE_SECOND = 7 * 24 * 3600
 CONFIG_PROXY_ORIGIN_URL_HEADER = "x-original-url"

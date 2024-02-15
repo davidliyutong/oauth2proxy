@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  oauth2proxy:
+    image: davidliyutong/oauth2proxy:latest
+    container_name: oauth2proxy
+    restart: always
+    environment:
+      - DEBUG=False
+      - API_NUM_WORKERS=4
+      - API_HOST=0.0.0.0
+      - API_PORT=8080
+      - API_ACCESS_LOG=False
+      - OIDC_NAME=example_name
+      - OIDC_BASE_URL=https://authentik.example.com/oauth2/
+      - OIDC_AUTHORIZATION_URL=https://authentik.example.com/authorize
+      - OIDC_TOKEN_URL=https://authentik.example.com/token
+      - OIDC_USER_INFO_URL=https:///authentik.example.com/userinfo
+      - OIDC_LOGOUT_URL=https://authentik.example.com/oauth2/example_name/end-session
+      - OIDC_JWKS_URL=https://authentik.example.com/oauth2/example_name/jwks
+      - OIDC_FRONTEND_LOGIN_URL=https://filebrowser.example.com/
+      - OIDC_CLIENT_ID=xxx
+      - OIDC_CLIENT_SECRET=yyy
+      - OIDC_REDIRECT_URL=https://oauth2proxy.example.com/v1/auth/oidc/authorize
+      - OIDC_SCOPE=3
+      - 'OIDC_SCOPE_DELIMITER= '
+      - OIDC_RESPONSE_TYPE=code
+      - OIDC_GRANT_TYPE=authorization_code
+      - 'OIDC_USER_FILTER={"$and": [{"organize.id": "26000"}, {"userType": "faculty"}]}'
+      - OIDC_USER_INFO_PATH=entities[0]
+      - OIDC_USERNAME_PATH=account
+      - OIDC_EMAIL_PATH=email
+      - OIDC_LOGIN_EXPIRE_SECOND=3600
+      - OIDC_JWT_SECRET=CHANGE_ME
+      - OIDC_JWT_ALGORITHM=HS256
+    ports:
+      - "8080:8080"

@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2proxy
+  labels:
+    app: oauth2proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2proxy
+    spec:
+      containers:
+      - name: oauth2proxy
+        image: davidliyutong/oauth2proxy:latest
+        env:
+          - name: DEBUG
+            value: "False"
+          - name: API_NUM_WORKERS
+            value: "4"
+          - name: API_HOST
+            value: "0.0.0.0"
+          - name: API_PORT
+            value: "8080"
+          - name: API_ACCESS_LOG
+            value: "False"
+          - name: OIDC_NAME
+            value: "example_name"
+          - name: OIDC_BASE_URL
+            value: "https://authentik.example.com/oauth2/"
+          - name: OIDC_AUTHORIZATION_URL
+            value: "https://authentik.example.com/authorize"
+          - name: OIDC_TOKEN_URL
+            value: "https://authentik.example.com/token"
+          - name: OIDC_USER_INFO_URL
+            value: "https:///authentik.example.com/userinfo"
+          - name: OIDC_LOGOUT_URL
+            value: "https://authentik.example.com/oauth2/example_name/end-session"
+          - name: OIDC_JWKS_URL
+            value: "https://authentik.example.com/oauth2/example_name/jwks"
+          - name: OIDC_FRONTEND_LOGIN_URL
+            value: "https://filebrowser.example.com/"
+          - name: OIDC_CLIENT_ID
+            value: "xxx"
+          - name: OIDC_CLIENT_SECRET
+            value: "yyy"
+          - name: OIDC_REDIRECT_URL
+            value: "https://oauth2proxy.example.com/v1/auth/oidc/authorize"
+          - name: OIDC_SCOPE
+            value: "3"
+          - name: OIDC_SCOPE_DELIMITER
+            value: " "
+          - name: OIDC_RESPONSE_TYPE
+            value: "code"
+          - name: OIDC_GRANT_TYPE
+            value: "authorization_code"
+          - name: OIDC_USER_FILTER
+            value: '{"$and": [{"organize.id": "26000"}, {"userType": "faculty"}]}'
+          - name: OIDC_USER_INFO_PATH
+            value: "entities[0]"
+          - name: OIDC_USERNAME_PATH
+            value: "account"
+          - name: OIDC_EMAIL_PATH
+            value: "email"
+          - name: OIDC_LOGIN_EXPIRE_SECOND
+            value: "3600"
+          - name: OIDC_JWT_SECRET
+            value: "CHANGE_ME"
+          - name: OIDC_JWT_ALGORITHM
+            value: "HS256"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2proxy
+  labels:
+    app: oauth2proxy
+spec:
+  selector:
+    app: oauth2proxy
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth2proxy-ingress
+  labels:
+    app: oauth2proxy
+spec:
+  tls:
+  - hosts:
+      - oauth2proxy.example.com
+    secretName: oauth2proxy-example-com-tls
+  rules:
+  - host: "oauth2proxy.example.com"
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: oauth2proxy
+            port:
+              number: 8080
